@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Nam%204/AI%20Thuc%20chien/Day21-Track2-CI-CD-for-AI-Systems/mlruns/0/0a7a486367fc4968b103c01b9ab135d3/artifacts
+end_time: 1778152362173
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 0a7a486367fc4968b103c01b9ab135d3
+run_name: suave-vole-480
+run_uuid: 0a7a486367fc4968b103c01b9ab135d3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778152354495
+status: 3
+tags: []
+user_id: Admin

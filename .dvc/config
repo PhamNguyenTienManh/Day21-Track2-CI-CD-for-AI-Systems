@@ -2,3 +2,4 @@
     remote = myremote
 ['remote "myremote"']
     url = gs://manh-mlops-wine-2026/dvc
+    credentialpath = ../sa-key.json

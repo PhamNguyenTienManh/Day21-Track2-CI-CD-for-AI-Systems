@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Nam%204/AI%20Thuc%20chien/Day21-Track2-CI-CD-for-AI-Systems/mlruns/0/2223adeeaaf34cc0a430a1a5a4d72500/artifacts
+end_time: 1778161558131
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2223adeeaaf34cc0a430a1a5a4d72500
+run_name: grandiose-hound-657
+run_uuid: 2223adeeaaf34cc0a430a1a5a4d72500
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778161555399
+status: 3
+tags: []
+user_id: Admin

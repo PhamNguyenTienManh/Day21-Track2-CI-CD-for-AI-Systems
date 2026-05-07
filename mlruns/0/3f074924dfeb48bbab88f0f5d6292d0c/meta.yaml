@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Nam%204/AI%20Thuc%20chien/Day21-Track2-CI-CD-for-AI-Systems/mlruns/0/3f074924dfeb48bbab88f0f5d6292d0c/artifacts
+end_time: 1778152637714
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3f074924dfeb48bbab88f0f5d6292d0c
+run_name: colorful-crow-732
+run_uuid: 3f074924dfeb48bbab88f0f5d6292d0c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778152631625
+status: 3
+tags: []
+user_id: Admin

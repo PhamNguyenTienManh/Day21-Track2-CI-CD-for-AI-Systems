@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Nam%204/AI%20Thuc%20chien/Day21-Track2-CI-CD-for-AI-Systems/mlruns/0/e51df86b2c6543eaaadcc03b4e0f2b3c/artifacts
+end_time: 1778161552406
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e51df86b2c6543eaaadcc03b4e0f2b3c
+run_name: receptive-yak-858
+run_uuid: e51df86b2c6543eaaadcc03b4e0f2b3c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778161541544
+status: 3
+tags: []
+user_id: Admin

@@ -4,13 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'data/**.dvc'
-      - 'src/**.py'
-      - 'params.yaml'
+      - "data/**.dvc"
+      - "src/**.py"
+      - "params.yaml"
   workflow_dispatch:
 
 jobs:
-
   # ---------------------------------------------------------------------------
   # JOB 1 - UNIT TEST
   # Chay unit tests tren du lieu ao (khong can ket noi cloud storage).
@@ -32,8 +31,7 @@ jobs:
 
       - name: Run unit tests
         # TODO 1: Viet lenh de chay pytest tren thu muc tests/ voi co -v
-        run: # <dien lenh o day>
-
+        run: pytest tests/ -v
 
   # ---------------------------------------------------------------------------
   # JOB 2 - TRAIN
@@ -65,12 +63,17 @@ jobs:
         #        echo "AWS_SECRET_ACCESS_KEY=..." >> $GITHUB_ENV
         # Azure: echo "AZURE_STORAGE_CONNECTION_STRING=..." >> $GITHUB_ENV
         run: |
-          # <dien code o day>
+          cat <<'EOF' > /tmp/sa-key.json
+          ${{ secrets.CLOUD_CREDENTIALS }}
+          EOF
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa-key.json" >> $GITHUB_ENV
+          echo "MLFLOW_TRACKING_URI=sqlite:///mlflow.db" >> $GITHUB_ENV
+          echo "MLFLOW_ARTIFACT_ROOT=./mlartifacts" >> $GITHUB_ENV
 
       - name: Pull data with DVC
         # TODO 3: Pull cac file du lieu can thiet tu cloud storage bang lenh dvc pull.
         #         Chi pull train_phase1.csv va eval.csv (khong can train_phase2.csv).
-        run: # <dien lenh o day>
+        run: dvc pull data/train_phase1.csv.dvc data/eval.csv.dvc
 
       - name: Train model
         run: python src/train.py
@@ -84,7 +87,8 @@ jobs:
         #   ACC=$(python -c "import json; d=json.load(open('outputs/metrics.json')); print(d['accuracy'])")
         #   echo "accuracy=$ACC" >> $GITHUB_OUTPUT
         run: |
-          # <dien code o day>
+          ACC=$(python -c "import json; d=json.load(open('outputs/metrics.json')); print(d['accuracy'])")
+          echo "accuracy=$ACC" >> $GITHUB_OUTPUT
 
       - name: Upload model to Cloud Storage
         # TODO 5: Su dung cloud SDK de upload models/model.pkl len
@@ -92,7 +96,13 @@ jobs:
         #         Ten bucket lay tu secret CLOUD_BUCKET.
         run: |
           python - <<'EOF'
-          # <dien code Python o day>
+          from google.cloud import storage
+
+          client = storage.Client()
+          bucket = client.bucket("${{ secrets.CLOUD_BUCKET }}")
+          blob = bucket.blob("models/latest/model.pkl")
+          blob.upload_from_filename("models/model.pkl")
+          print("Uploaded models/model.pkl to gs://${{ secrets.CLOUD_BUCKET }}/models/latest/model.pkl")
           EOF
 
       - name: Save metrics as artifact
@@ -100,7 +110,6 @@ jobs:
         with:
           name: metrics
           path: outputs/metrics.json
-
 
   # ---------------------------------------------------------------------------
   # JOB 3 - EVAL
@@ -113,7 +122,6 @@ jobs:
     needs: train
     runs-on: ubuntu-latest
     steps:
-
       - name: Check eval gate
         # TODO 6: Doc accuracy tu output cua job train.
         #         Neu accuracy < 0.70, ket thuc voi loi ro rang.
@@ -126,9 +134,11 @@ jobs:
         #   print("PASSED: dang trien khai model.")
         run: |
           python - <<'EOF'
-          # <dien code Python o day>
+          acc = float("${{ needs.train.outputs.accuracy }}")
+          if acc < 0.70:
+              raise SystemExit(f"FAILED: accuracy {acc:.4f} < 0.70. Huy deploy.")
+          print(f"PASSED: accuracy {acc:.4f} >= 0.70. Dang trien khai model.")
           EOF
-
 
   # ---------------------------------------------------------------------------
   # JOB 4 - DEPLOY
@@ -140,7 +150,6 @@ jobs:
     needs: eval
     runs-on: ubuntu-latest
     steps:
-
       - name: SSH deploy to VM
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -148,12 +157,6 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            # TODO 7: Restart service mlops-serve tren VM.
-            # TODO 8: Cho server san sang roi goi curl /health de xac nhan.
-            #         Neu health check that bai sau nhieu lan thu, thoat voi exit 1.
-            #
-            # Goi y:
-            #   sudo systemctl restart mlops-serve
-            #   sleep 5
-            #   curl -sf http://localhost:8000/health && echo "Health check passed." || exit 1
-            # <dien lenh bash o day>
+            sudo systemctl restart mlops-serve
+            sleep 5
+            curl -sf http://localhost:8000/health && echo "Health check passed." || exit 1
